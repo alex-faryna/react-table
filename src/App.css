@@ -1,108 +1,3 @@
-.nav {
-  display: flex;
-  align-items: center;
-  height: 64px;
-}
-
-.header {
-  padding: 0.25rem 0;
-  border-bottom: 1px solid grey;
-}
-
-.footer {
-  border-top: 1px solid grey;
-  justify-content: center;
-}
-
-.header img {
-  height: 75%;
-}
-
-.rates-table {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(auto, 1fr));
-}
-
-.rates-table .cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border: 1px solid grey;
-  padding: 1rem;
-  position: relative;
-  width: 100%;
-}
-
-.rates-table .cell .field {
-  width: 100%;
-  outline: none;
-  border: 2px solid grey;
-  padding: 0.1rem 0.2rem;
-  border-radius: 5px;
-}
-
-.rates-table .cell .edit-icon {
-  position: absolute;
-  display: none;
-  top: 0.25rem;
-  right: 0.25rem;
-  scale: 1.25;
-}
-
-.rates-table .cell:hover .edit-icon:not(.editing) {
-  display: block;
-}
-
-.converter {
-  display: flex;
-  width: 70%;
-  align-items: center;
-  justify-content: space-around;
-}
-
-/* media uqery if small scren then converter goes on top of each other */
-
-.currency-side {
-  padding: 1rem 1rem 0.5rem;
-  width: 100%;
-  display: grid;
-  gap: 5px;
-  grid-template-columns: 1fr 70px;
-  grid-template-areas: "title ."
-                       "input select";
-}
-
-.currency-title {
-  grid-area: title;
-}
-
-.currency-input {
-  grid-area: input;
-}
-
-.currency-select {
-  grid-area: select;
-}
-
-.currency-select button {
-  width: 100%;
-}
-
-.switch-icon {
-  align-self: flex-end;
-  width: 3rem;
-  height: 3rem;
-}
-
-
-
-
-/*
-here bro
- */
-
 .container {
   height: 70%;
   width: 70%;
@@ -116,41 +11,62 @@ here bro
   height: 100%;
   width: 100%;
   overflow: auto;
-  border: 1px solid black;
+  border-top: none;
+  position: relative;
 }
 
 table td {
   border-left: 1px solid black;
-  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+table td:last-child {
+  border-right: 1px solid black;
+}
+
+table tr {
+  height: 40px;
+}
+
+table *:not(tfoot) tr:last-child td {
+  border-bottom: none;
 }
 
 table {
   width: 100%;
-  height: 100%;
-  position: relative;
   border-spacing: 0;
+  table-layout: fixed;
 }
 
-tbody tr:first-child td, tr:first-child th {
+table tfoot {
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  background: white;
+}
+
+table.empty {
+  height: 100%;
+}
+
+tbody tr:first-child td {
   border-top: none;
 }
 
-td:first-child, th:first-child {
-  border-left: none;
+td:first-child{
+  border-right: none;
 }
 
 th {
   top: 0;
   background: white;
   position: sticky;
-  border-bottom: 1px solid black;
-  border-left: 1px solid black;
+  border: 1px solid black;
+  border-right: none;
 }
 
-tfoot {
-  bottom: 0;
-  background: white;
-  position: sticky;
+th:last-child {
+  border-right: 1px solid black;
 }
 
 tfoot td {

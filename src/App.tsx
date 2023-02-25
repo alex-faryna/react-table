@@ -1,10 +1,10 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import './App.css';
-import axios from './mocks';
-
+import axios from './stub/mocks';
+import {Student} from "./models/student.model";
 
 type ColumnTemplate<T> = (value: unknown, key: keyof T, ...args: unknown[]) => ReactNode;
-type ColumnData = Record<string, unknown> & { id: number | string };
+type ColumnData = { id: number | string };
 
 interface Column<T extends ColumnData> {
     key: keyof T & (string | number),
@@ -12,19 +12,7 @@ interface Column<T extends ColumnData> {
     body?: ColumnTemplate<T>,
 }
 
-axios.get('/students')
-    .then(function (response) {
-        // handle success
-        console.log(response);
-    })
-
-
-function Table<T extends ColumnData>({
-                                         columns,
-                                         data,
-                                         loadMore,
-                                         threshold = 10.0
-                                     }: { columns: Column<T>[], data: T[], loadMore: Function, threshold?: number }) {
+function Table<T extends ColumnData>({ columns, data, loadMore, threshold = 10.0 }: { columns: Column<T>[], data: T[], loadMore?: Function, threshold?: number }) {
     const [loadingAdditional, setLoadingAdditional] = useState(false);
 
     const createRow = (row: T) => columns.map(({body, key}) =>
@@ -37,18 +25,21 @@ function Table<T extends ColumnData>({
         const scrolled = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) <= threshold;
         if (scrolled) {
             setLoadingAdditional(true);
-            loadMore();
+            loadMore && loadMore();
         }
     }
+    const empty = <tr>
+        <td colSpan={columns.length || 1}>Empty</td>
+    </tr>;
 
     useEffect(() => setLoadingAdditional(false), [data]);
 
     return <div className='table-container' onScroll={scroll}>
-        <table>
+        <table className={ data?.length ? '' : 'empty' }>
             <thead>
                 <tr>{header}</tr>
             </thead>
-            <tbody>{body}</tbody>
+            <tbody>{ data?.length ? body : empty}</tbody>
             <tfoot>
             <tr>
                 <td colSpan={columns.length || 1}>
@@ -62,93 +53,52 @@ function Table<T extends ColumnData>({
 
 
 function App() {
-    const arr = [
-        {
-            id: 0,
-            key1: 'val1',
-            key2: 56
-        },
-        {
-            id: 1,
-            key1: 'val 45',
-            key2: 34
-        },
-        {
-            id: 10,
-            key1: 'val1',
-            key2: 56
-        },
-        {
-            id: 11,
-            key1: 'val 45',
-            key2: 34
-        },
-        {
-            id: 20,
-            key1: 'val1',
-            key2: 56
-        },
-        {
-            id: 21,
-            key1: 'val 45',
-            key2: 34
-        },
-        {
-            id: 30,
-            key1: 'val1',
-            key2: 56
-        },
-        {
-            id: 31,
-            key1: 'val 45',
-            key2: 34
-        },
-        {
-            id: 40,
-            key1: 'val1',
-            key2: 56
-        },
-        {
-            id: 41,
-            key1: 'val 45',
-            key2: 34
-        },
-        {
-            id: 50,
-            key1: 'val1',
-            key2: 56
-        },
-        {
-            id: 51,
-            key1: 'val 45',
-            key2: 34
-        },
-    ];
+    const [data, setData] = useState([]);
 
-    const [data, setData] = useState(arr);
+    const getStubData = async () => {
+        const res = await axios.get('/students', {
+            params: {
+                limit: 20,
+            }
+        });
+        setData(res.data);
+    }
 
-    const columns: Column<typeof data[0]>[] = [
+    useEffect( () => {
+        void getStubData();
+    }, []);
+
+    const columns: Column<Student>[] = [
         {
-            header: 'header 1',
-            key: 'key1',
+            header: 'Id',
+            key: 'id',
         },
         {
+            header: 'Name',
+            key: 'name',
+        },
+        {
+            header: 'Name',
+            key: 'name',
+        },
+        /*{
             header: 'header 2',
             key: 'key2',
             body: (value: any, key: string, row: any) => {
                 return <><h1>{value}</h1><span>{row['key1']}</span></>;
             },
-        }
+        }*/
     ];
 
-    const load = () => {
+    /*const load = () => {
         setTimeout(() => {
             setData([...data, ...data].map((row, id) => ({...row, id})));
         }, 1500);
-    }
+    }*/
+    // loadMore={load}
 
     return <div className='container'>
-        <Table columns={columns} data={data} loadMore={load}></Table>
+        <Table columns={columns} data={data}></Table>
     </div>
 }
 
