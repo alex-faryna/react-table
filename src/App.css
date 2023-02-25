@@ -1,0 +1,134 @@
+.nav {
+  display: flex;
+  align-items: center;
+  height: 64px;
+}
+
+.header {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid grey;
+}
+
+.footer {
+  border-top: 1px solid grey;
+  justify-content: center;
+}
+
+.header img {
+  height: 75%;
+}
+
+.rates-table {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(auto, 1fr));
+}
+
+.rates-table .cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid grey;
+  padding: 1rem;
+  position: relative;
+  width: 100%;
+}
+
+.rates-table .cell .field {
+  width: 100%;
+  outline: none;
+  border: 2px solid grey;
+  padding: 0.1rem 0.2rem;
+  border-radius: 5px;
+}
+
+.rates-table .cell .edit-icon {
+  position: absolute;
+  display: none;
+  top: 0.25rem;
+  right: 0.25rem;
+  scale: 1.25;
+}
+
+.rates-table .cell:hover .edit-icon:not(.editing) {
+  display: block;
+}
+
+.converter {
+  display: flex;
+  width: 70%;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/* media uqery if small scren then converter goes on top of each other */
+
+.currency-side {
+  padding: 1rem 1rem 0.5rem;
+  width: 100%;
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 1fr 70px;
+  grid-template-areas: "title ."
+                       "input select";
+}
+
+.currency-title {
+  grid-area: title;
+}
+
+.currency-input {
+  grid-area: input;
+}
+
+.currency-select {
+  grid-area: select;
+}
+
+.currency-select button {
+  width: 100%;
+}
+
+.switch-icon {
+  align-self: flex-end;
+  width: 3rem;
+  height: 3rem;
+}
+
+
+
+
+/*
+here bro
+ */
+
+.container {
+  height: 70%;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rem;
+  overflow: scroll;
+}
+
+.table-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rem;
+  overflow: scroll;
+}
+
+table {
+  width: 100%;
+}
+
+table > * > * > *{
+  border: 1px solid black;
+}
+
+
