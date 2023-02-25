@@ -1,5 +1,7 @@
-import React, {ReactNode, useState} from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import './App.css';
+import axios from './mocks';
+
 
 type ColumnTemplate<T> = (value: unknown, key: keyof T, ...args: unknown[]) => ReactNode;
 type ColumnData = Record<string, unknown> & { id: number | string };
@@ -10,12 +12,21 @@ interface Column<T extends ColumnData> {
     body?: ColumnTemplate<T>,
 }
 
+axios.get('/students')
+    .then(function (response) {
+        // handle success
+        console.log(response);
+    })
+
+
 function Table<T extends ColumnData>({
                                          columns,
                                          data,
                                          loadMore,
                                          threshold = 10.0
                                      }: { columns: Column<T>[], data: T[], loadMore: Function, threshold?: number }) {
+    const [loadingAdditional, setLoadingAdditional] = useState(false);
+
     const createRow = (row: T) => columns.map(({body, key}) =>
         <td key={key}>{body ? body(row[key], key, row) : `${row[key]}`}</td>);
     const body = data.map(row => <tr key={row.id}>{createRow(row)}</tr>);
@@ -25,23 +36,24 @@ function Table<T extends ColumnData>({
         const element = event.target as HTMLElement;
         const scrolled = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) <= threshold;
         if (scrolled) {
+            setLoadingAdditional(true);
             loadMore();
         }
     }
 
+    useEffect(() => setLoadingAdditional(false), [data]);
+
     return <div className='table-container' onScroll={scroll}>
         <table>
             <thead>
-            <tr>
-                {header}
-            </tr>
+                <tr>{header}</tr>
             </thead>
-            <tbody>
-            {body}
-            </tbody>
+            <tbody>{body}</tbody>
             <tfoot>
             <tr>
-                <td colSpan={columns.length || 1}>footer</td>
+                <td colSpan={columns.length || 1}>
+                    { loadingAdditional ? 'Loading...' : `${ data.length } items` }
+                </td>
             </tr>
             </tfoot>
         </table>
@@ -130,7 +142,9 @@ function App() {
     ];
 
     const load = () => {
-        setData([...data, ...data].map((row, id) => ({...row, id})));
+        setTimeout(() => {
+            setData([...data, ...data].map((row, id) => ({...row, id})));
+        }, 1500);
     }
 
     return <div className='container'>
