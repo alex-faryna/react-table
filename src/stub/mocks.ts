@@ -8,7 +8,7 @@ const mock = new AxiosMockAdapter(axios, { delayResponse: 1000 });
 const mockData: Student[] = [];
 const studentsCount = randomInt(1200, 900);
 
-for (let i = 0;i < studentsCount;i++) {
+for (let i = 1;i < studentsCount;i++) {
     mockData.push({
         id: i,
         name: `${names[randomInt(0, names.length - 1)]} ${i}`,

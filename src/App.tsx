@@ -3,29 +3,27 @@ import './App.css';
 import axios from './stub/mocks';
 import {Student} from "./models/student.model";
 
-type ColumnTemplate<T> = (value: unknown, key: keyof T, ...args: unknown[]) => ReactNode;
+type ColumnTemplate<T> = (row: T) => ReactNode;
 type ColumnData = { id: number | string };
 
-interface Column<T extends ColumnData> {
-    key: keyof T & (string | number),
-    header: string,
-    body?: ColumnTemplate<T>,
-}
+type Column<T extends ColumnData> = { header?: string } &
+    ({ body: ColumnTemplate<T> } | { key: keyof T & (string | number) });
 
-function Table<T extends ColumnData>({ columns, data, loadMore, threshold = 10.0 }: { columns: Column<T>[], data: T[], loadMore?: Function, threshold?: number }) {
+function Table<T extends ColumnData>({ columns, data, loadMore, threshold = 10.0 }: { columns: Column<T>[], data: T[], loadMore?: (count: number) => void, threshold?: number }) {
     const [loadingAdditional, setLoadingAdditional] = useState(false);
 
-    const createRow = (row: T) => columns.map(({body, key}) =>
-        <td key={key}>{body ? body(row[key], key, row) : `${row[key]}`}</td>);
+    const createRow = (row: T) => columns.map((column, idx) =>
+        <td key={idx}>{ 'body' in column ? column.body(row) : `${row[column.key]}` }</td>);
+
     const body = data.map(row => <tr key={row.id}>{createRow(row)}</tr>);
-    const header = columns.map(({header, key}) => <th key={key}>{header}</th>);
+    const header = columns.map(({header}, idx) => <th key={idx}>{header}</th>);
 
     const scroll = (event: React.UIEvent) => {
         const element = event.target as HTMLElement;
         const scrolled = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) <= threshold;
         if (scrolled) {
             setLoadingAdditional(true);
-            loadMore && loadMore();
+            loadMore && loadMore(data.length);
         }
     }
     const empty = <tr>
@@ -53,15 +51,15 @@ function Table<T extends ColumnData>({ columns, data, loadMore, threshold = 10.0
 
 
 function App() {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<Student[]>([]);
 
-    const getStubData = async () => {
+    const getStubData = async (skip?: number) => {
         const res = await axios.get('/students', {
             params: {
-                limit: 20,
+                skip,
             }
         });
-        setData(res.data);
+        setData([...data, ...res.data]);
     }
 
     useEffect( () => {
@@ -78,27 +76,26 @@ function App() {
             key: 'name',
         },
         {
-            header: 'Name',
-            key: 'name',
+            header: 'Lectures attended',
+            key: 'lecturesAttended',
         },
-        /*{
-            header: 'header 2',
-            key: 'key2',
-            body: (value: any, key: string, row: any) => {
-                return <><h1>{value}</h1><span>{row['key1']}</span></>;
-            },
-        }*/
+        {
+            header: 'Total lectures',
+            key: 'totalLectures',
+        },
+        {
+            header: 'Grades',
+            body: row => {
+                const subjects = Object.values(row.marks);
+                const max = subjects.reduce((prev, subject ) => prev + subject.totalMarks, 0);
+                const current = subjects.reduce((prev, subject ) => prev + subject.marksObtained, 0);
+                return <span>{ `${current}/${max}` }</span>;
+            }
+        }
     ];
 
-    /*const load = () => {
-        setTimeout(() => {
-            setData([...data, ...data].map((row, id) => ({...row, id})));
-        }, 1500);
-    }*/
-    // loadMore={load}
-
     return <div className='container'>
-        <Table columns={columns} data={data}></Table>
+        <Table columns={columns} data={data} loadMore={count => getStubData(count)}></Table>
     </div>
 }
 
