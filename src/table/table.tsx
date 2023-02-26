@@ -15,6 +15,8 @@ function Table<T extends ColumnData>(
         additionalLoading,
         threshold = 10.0
     }: { columns: Column<T>[], data: T[], loadMore?: (count: number) => void, loading: boolean, additionalLoading: boolean, threshold?: number }) {
+    const [dots, setDots] = useState(0);
+
     const createRow = (row: T) => columns.map((column, idx) =>
         <td key={idx}>{'body' in column ? column.body(row) : `${row[column.key]}`}</td>);
 
@@ -35,12 +37,23 @@ function Table<T extends ColumnData>(
         <td colSpan={columns.length || 1}>Empty</td>
     </tr>;
 
+    const loadingTemplate = <tr>
+        <td colSpan={columns.length || 1}>Loading{'.'.repeat(dots)}</td>
+    </tr>;
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setDots((dots) => (dots + 1) % 4);
+        }, 500);
+        return () => clearInterval(intervalId);
+    }, []);
+
     return <div className='table-container' onScroll={scroll}>
         <table className={data?.length ? '' : 'empty'}>
             <thead>
             <tr>{header}</tr>
             </thead>
-            <tbody>{data?.length ? body : empty}</tbody>
+            <tbody>{ loading ? loadingTemplate : (data?.length ? body : empty) }</tbody>
             <tfoot>
             <tr>
                 <td colSpan={columns.length || 1}>

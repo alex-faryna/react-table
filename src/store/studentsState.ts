@@ -9,7 +9,7 @@ export type StudentsState = {
 
 const initialState: StudentsState = {
     students: [],
-    initialLoading: 'loaded',
+    initialLoading: 'loading',
     additionalLoading: 'loaded'
 };
 
