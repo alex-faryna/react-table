@@ -1,8 +1,8 @@
 import {configureStore} from "@reduxjs/toolkit";
-import exchangeReducer, {ExchangeState} from './exchange.state'
+import studentsReducer, {StudentsState} from './studentsState'
 
 export interface RootState {
-    exchange: ExchangeState,
+    students: StudentsState,
 }
 
 const logger = (store: { getState: () => any; }) => (next: (arg0: any) => any) => (action: { type: any; }) => {
@@ -16,7 +16,7 @@ const logger = (store: { getState: () => any; }) => (next: (arg0: any) => any) =
 
 const store = configureStore({
     reducer: {
-        exchange: exchangeReducer,
+        students: studentsReducer,
     },
     middleware: [],
 });
