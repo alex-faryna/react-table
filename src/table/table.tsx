@@ -13,8 +13,9 @@ function Table<T extends ColumnData>(
         loadMore,
         loading,
         additionalLoading,
+        error,
         threshold = 10.0
-    }: { columns: Column<T>[], data: T[], loadMore?: (count: number) => void, loading: boolean, additionalLoading: boolean, threshold?: number }) {
+    }: { columns: Column<T>[], data: T[], loadMore?: (count: number) => void, loading: boolean, error: boolean, additionalLoading: boolean, threshold?: number }) {
     const [dots, setDots] = useState(0);
 
     const createRow = (row: T) => columns.map((column, idx) =>
@@ -57,7 +58,7 @@ function Table<T extends ColumnData>(
             <tfoot>
             <tr>
                 <td colSpan={columns.length || 1}>
-                    {additionalLoading ? 'Loading...' : `${data.length} items`}
+                    {additionalLoading ? 'Loading...' : (error ? 'Error loading data' : `${data.length} items`)}
                 </td>
             </tr>
             </tfoot>

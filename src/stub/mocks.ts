@@ -3,7 +3,7 @@ import axios from 'axios';
 import names from "./names.stub";
 import {Student} from "../models/student.model";
 
-const mock = new AxiosMockAdapter(axios, { delayResponse: 10000 });
+const mock = new AxiosMockAdapter(axios, { delayResponse: 650 });
 
 const mockData: Student[] = [];
 const studentsCount = randomInt(1200, 900);
@@ -44,6 +44,9 @@ for (let i = 1;i < studentsCount;i++) {
     });
 }
 
+
+
+
 mock.onGet("/students").reply(config => {
     const searchTerm = config?.params?.['searchTerm'];
     const skip = config?.params?.['skip'] || 0;
@@ -52,6 +55,8 @@ mock.onGet("/students").reply(config => {
     const res = searchTerm?.length ? mockData.filter(s => s.name.includes(searchTerm)) : mockData;
     return [200, res.slice(skip, skip + limit)];
 });
+
+mock.onGet("/students").networkError();
 
 function randomInt(max: number, min = 0) {
     return min + Math.floor(Math.random() * (max - min + 1));
