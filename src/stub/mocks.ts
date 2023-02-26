@@ -3,7 +3,7 @@ import axios from 'axios';
 import names from "./names.stub";
 import {Student} from "../models/student.model";
 
-const mock = new AxiosMockAdapter(axios, { delayResponse: 1000 });
+const mock = new AxiosMockAdapter(axios, { delayResponse: 100 });
 
 const mockData: Student[] = [];
 const studentsCount = randomInt(1200, 900);

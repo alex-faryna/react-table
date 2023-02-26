@@ -95,7 +95,7 @@ function App() {
     ];
 
     return <div className='container'>
-        <Table columns={columns} data={data} loadMore={count => getStubData(count)}></Table>
+        <Table columns={columns} data={data} threshold={400} loadMore={count => getStubData(count)}></Table>
     </div>
 }
 
