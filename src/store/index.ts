@@ -18,7 +18,7 @@ const store = configureStore({
     reducer: {
         students: studentsReducer,
     },
-    middleware: [],
+    // middleware: [logger],
 });
 
 export default store;

@@ -1,4 +1,6 @@
 import React, {ReactNode, useEffect, useState} from "react";
+import {Simulate} from "react-dom/test-utils";
+import loadedData = Simulate.loadedData;
 
 export type ColumnTemplate<T> = (row: T) => ReactNode;
 export type ColumnData = { id: number | string };
@@ -25,13 +27,13 @@ function Table<T extends ColumnData>(
     const header = columns.map(({header}, idx) => <th key={idx}>{header}</th>);
 
     const scroll = (event: React.UIEvent) => {
-        if (additionalLoading) {
+        if (loading || additionalLoading) {
             return;
         }
         const element = event.target as HTMLElement;
         const scrolled = Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) <= threshold;
         if (scrolled) {
-            loadMore && loadMore(data.length);
+            loadMore && loadMore(loading ? 0 : data.length);
         }
     }
     const empty = <tr>
@@ -58,7 +60,7 @@ function Table<T extends ColumnData>(
             <tfoot>
             <tr>
                 <td colSpan={columns.length || 1}>
-                    {additionalLoading ? 'Loading...' : (error ? 'Error loading data' : `${data.length} items`)}
+                    {additionalLoading ? 'Loading...' : (error ? 'Error loading data' : `${ loading ? 0 : data.length} items`)}
                 </td>
             </tr>
             </tfoot>

@@ -2,6 +2,7 @@ import AxiosMockAdapter from "axios-mock-adapter";
 import axios from 'axios';
 import names from "./names.stub";
 import {Student} from "../models/student.model";
+import {skipToken} from "@reduxjs/toolkit/query";
 
 const mock = new AxiosMockAdapter(axios, { delayResponse: 650 });
 
@@ -45,18 +46,16 @@ for (let i = 1;i < studentsCount;i++) {
 }
 
 
-
-
 mock.onGet("/students").reply(config => {
     const searchTerm = config?.params?.['searchTerm'];
     const skip = config?.params?.['skip'] || 0;
     const limit = config?.params?.['limit'] || 20;
 
-    const res = searchTerm?.length ? mockData.filter(s => s.name.includes(searchTerm)) : mockData;
+    const res = searchTerm?.length ? mockData.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())) : mockData;
     return [200, res.slice(skip, skip + limit)];
 });
 
-mock.onGet("/students").networkError();
+// mock.onGet("/students").networkError();
 
 function randomInt(max: number, min = 0) {
     return min + Math.floor(Math.random() * (max - min + 1));
