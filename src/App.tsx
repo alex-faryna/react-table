@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import './App.css';
 import axios from './stub/mocks';
 import {Student} from "./models/student.model";
 import {useDispatch, useSelector} from 'react-redux';
@@ -42,6 +41,15 @@ const columnsConfig: Column<Student>[] = [
     }
 ];
 
+const Container = styled.div`
+    height: 70%;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+`;
+
 const Columns = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -74,7 +82,7 @@ function App() {
         setDialogData(row);
     }
 
-    return <div className='container'>
+    return <Container>
         <Search search={value => setSearch(value.toLowerCase())}></Search>
         <Table columns={columnsConfig}
                data={loading ? [] : state.students}
@@ -107,7 +115,7 @@ function App() {
                 </Columns> : null
             }
         </Dialog>
-    </div>
+    </Container>
 }
 
 export default App;
