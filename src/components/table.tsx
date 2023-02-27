@@ -1,6 +1,4 @@
 import React, {ReactNode, useEffect, useState} from "react";
-import {Simulate} from "react-dom/test-utils";
-import loadedData = Simulate.loadedData;
 
 export type ColumnTemplate<T> = (row: T) => ReactNode;
 export type ColumnData = { id: number | string };
@@ -13,15 +11,27 @@ function Table<T extends ColumnData>(
         columns,
         data,
         loadMore,
+        rowClick,
         loading,
         additionalLoading,
         error,
         threshold = 10.0
-    }: { columns: Column<T>[], data: T[], loadMore?: (count: number) => void, loading: boolean, error: boolean, additionalLoading: boolean, threshold?: number }) {
+    }: {
+        columns: Column<T>[],
+        data: T[],
+        rowClick?: (data: T, ev: React.MouseEvent) => void,
+        loadMore?: (count: number) => void,
+        loading: boolean,
+        error: boolean,
+        additionalLoading: boolean,
+        threshold?: number
+    }) {
     const [dots, setDots] = useState(0);
 
     const createRow = (row: T) => columns.map((column, idx) =>
-        <td key={idx}>{'body' in column ? column.body(row) : `${row[column.key]}`}</td>);
+        <td key={idx} onClick={ev => rowClick?.(row, ev)}>
+            {'body' in column ? column.body(row) : `${row[column.key]}`}
+        </td>);
 
     const body = data.map(row => <tr key={row.id}>{createRow(row)}</tr>);
     const header = columns.map(({header}, idx) => <th key={idx}>{header}</th>);
@@ -56,11 +66,11 @@ function Table<T extends ColumnData>(
             <thead>
             <tr>{header}</tr>
             </thead>
-            <tbody>{ loading ? loadingTemplate : (data?.length ? body : empty) }</tbody>
+            <tbody>{loading ? loadingTemplate : (data?.length ? body : empty)}</tbody>
             <tfoot>
             <tr>
                 <td colSpan={columns.length || 1}>
-                    {additionalLoading ? 'Loading...' : (error ? 'Error loading data' : `${ loading ? 0 : data.length} items`)}
+                    {additionalLoading ? 'Loading...' : (error ? 'Error loading data' : `${loading ? 0 : data.length} items`)}
                 </td>
             </tr>
             </tfoot>
