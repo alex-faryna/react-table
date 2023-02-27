@@ -1,5 +1,43 @@
 import React, {useEffect, useState} from "react";
 import useDebounce from "../debounce";
+import styled from "styled-components";
+
+const ClearBtn = styled.div`
+    position: absolute;
+    right: 0.75rem;
+    display: none;
+    cursor: pointer;
+    
+    &:after{
+        display: inline-block;
+        font-size: 1.5em;
+        content: "\\00d7";
+        height: 31px;
+    }
+`;
+
+const Input = styled.input`
+    padding: 0.5rem;
+    border: 2px solid grey;
+    outline: none;
+    border-radius: 4px;
+    font-size: 1em;
+`;
+
+const SearchInput = styled.span`
+    position: relative;
+    display: flex;
+    height: 40px;
+    align-items: center;
+`;
+
+const SearchContainer = styled.div`
+    align-self: flex-start;
+    
+    &:hover ${ClearBtn} {
+        display: block;
+    }
+`;
 
 function Search({ search }: { search: (value: string) => void }) {
     const [value, setValue] = useState('');
@@ -18,13 +56,16 @@ function Search({ search }: { search: (value: string) => void }) {
         setValue(val);
     }
 
-    return <span className='search-container'>
-        <input autoComplete="off" value={value} onChange={event => input(event.target.value)}></input>
-        { value?.length ? <span className='clear' onClick={() => {
-            setValue('');
-            search('');
-        }}></span> : null }
-    </span>
+    return <SearchContainer>
+        <span>Search</span>
+        <SearchInput>
+            <Input autoComplete="off" value={value} onChange={event => input(event.target.value)}></Input>
+            { value?.length ? <ClearBtn onClick={() => {
+                setValue('');
+                search('');
+            }}></ClearBtn> : null }
+        </SearchInput>
+    </SearchContainer>
 }
 
 export default Search;
