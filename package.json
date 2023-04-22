@@ -2,6 +2,7 @@
   "name": "exchange",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://alex-faryna.github.io/react-table/",
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.2",
     "@testing-library/jest-dom": "^5.16.5",
@@ -31,7 +32,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -53,6 +56,7 @@
   },
   "devDependencies": {
     "@types/styled-components": "^5.1.26",
-    "axios-mock-adapter": "^1.21.2"
+    "axios-mock-adapter": "^1.21.2",
+    "gh-pages": "^5.0.0"
   }
 }
